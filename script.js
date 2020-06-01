@@ -18,6 +18,7 @@ const settings = {
 
 // student prototype
 const StudentObj = {
+  DomElement: "",
   listname: "",
   firstname: "",
   lastname: "",
@@ -35,6 +36,7 @@ const StudentObj = {
 const template = document.querySelector("template");
 const single = document.querySelector("#singleView");
 const main = document.querySelector("#studentList");
+const tableInfo = document.querySelector("#tableInfo");
 const searchBar = document.querySelector("#searchBar input");
 
 let singleOpen = false;
@@ -65,9 +67,15 @@ async function loadJson() {
 
 function prepareObjects(jsonData) {
   studentList = jsonData.map(prepareObject);
-
+  prepareImages();
   console.log(studentList);
   ShowList();
+}
+
+function prepareImages() {
+  studentList.forEach((student) => {
+    student.image = getStudentImage(student.firstname, student.lastname);
+  });
 }
 
 function prepareObject(jsonObject) {
@@ -102,7 +110,6 @@ function prepareObject(jsonObject) {
     student.middlename = midName;
   }
   student.listname = student.firstname + " " + student.lastname;
-  student.image = getStudentImage(student.firstname, student.lastname);
   student.house = capitalizeText(jsonObject.house);
   student.gender = capitalizeText(jsonObject.gender);
   student.blood = getBloodStatus(student.lastname);
@@ -116,8 +123,19 @@ function getStudentImage(firstName, lastName) {
   if (lastName == "") {
     return "";
   }
-  // if last name is not unique, modify firstnamepart
-
+  // last name not unique, modify firstnamepart
+  let uniqueLastNames = [];
+  let notUniqueLastnames = [];
+  studentList.forEach((s) => {
+    if (uniqueLastNames.includes(s.lastname)) {
+      notUniqueLastnames.push(s.lastname);
+    } else {
+      uniqueLastNames.push(s.lastname);
+    }
+  });
+  if (notUniqueLastnames.includes(lastName)) {
+    firstNamePart = firstName;
+  }
   // if name includes hyphen modify lastnamepart
   if (lastName.includes("-")) {
     let hyphenPlacement = lastName.indexOf("-");
@@ -157,22 +175,9 @@ function capitalizeText(myString) {
 
 function ShowList() {
   studentList.forEach((s) => {
-    activeInList.push(s);
-    let clone = template.cloneNode(true).content;
-
-    clone.querySelector(".studentItem").dataset.name = s.listname;
-    clone.querySelector(".name").textContent = s.listname;
-    clone.querySelector(".gender").textContent = s.gender;
-    clone.querySelector(".house").textContent = s.house;
-    clone.querySelector(".blood").textContent = s.blood;
-    clone.querySelector(".prefect").textContent = s.prefect;
-    clone.querySelector(".inquisitor").textContent = s.inqiusitor;
-    clone.querySelector(".picture").src = "/images/" + s.image;
-    main.appendChild(clone);
-    main.lastElementChild.addEventListener("click", function () {
-      showSingle(s);
-    });
+    makeStudentElement(s);
   });
+  updatetableInfo();
 }
 
 function showSingle(student) {
@@ -190,6 +195,27 @@ function showSingle(student) {
   }
 }
 
+function makeStudentElement(student) {
+  activeInList.push(student);
+  let clone = template.cloneNode(true).content;
+
+  clone.querySelector(".studentItem").dataset.name = student.listname;
+  clone.querySelector(".name").textContent = student.listname;
+  clone.querySelector(".gender").textContent = student.gender;
+  clone.querySelector(".house").textContent = student.house;
+  clone.querySelector(".blood").textContent = student.blood;
+  clone.querySelector(".prefect").textContent = student.prefect;
+  clone.querySelector(".inquisitor").textContent = student.inqiusitor;
+  if (student.image != undefined) {
+    clone.querySelector(".picture").src = "/images/" + student.image;
+  }
+  main.appendChild(clone);
+  student.DomElement = main.lastElementChild;
+  main.lastElementChild.addEventListener("click", function () {
+    showSingle(student);
+  });
+}
+
 function matchesSearch(student) {
   let nameSearch = student.listname.toLowerCase();
   if (nameSearch.includes(searchInput)) {
@@ -198,36 +224,61 @@ function matchesSearch(student) {
 }
 
 function updateList() {
-  console.log(searchInput);
+  let removeFromList = [];
+  let addToList = [];
+
+  // filter by searchinput
 
   activeInList = activeInList.filter(matchesSearch);
-  console.log(activeInList);
-  /*
 
-  // remove all in list that doesnt match criteria
-  activeInList.forEach((s) => {
-    let nameSearch = s.listname.toLowerCase();
+  // remove students from list
+  removeFromList.forEach((s) => {
+    s.DomElement.classList.add("minimize");
+    s.DomElement.addEventListener("animationend", () => {
+      s.DomElement.remove();
+    });
+  });
+  // add students to list
+  addToList.forEach((s) => {
+    makeStudentElement(s);
+  });
+  updatetableInfo();
+}
 
-    // remove if name not matching search criteria
-    if (nameSearch.includes(searchInput) == false) {
-      console.log(s.listname);
-      //let index = activeInList.indexOf(s);
-      //activeInList.splice(index, 1);
-      //notActiveInList.push(s);
+function updatetableInfo() {
+  tableInfo.querySelector(".studentNumbers").textContent =
+    activeInList.length + "/" + studentList.length + " students shown";
+  tableInfo.querySelector(".expelledNumbers").textContent =
+    expelledList.length + " students expelled";
+  let gryffindor = 0;
+  let hufflepuff = 0;
+  let ravenclaw = 0;
+  let slytherin = 0;
+  studentList.forEach((s) => {
+    switch (s.house) {
+      case "Gryffindor":
+        gryffindor++;
+        break;
+      case "Hufflepuff":
+        hufflepuff++;
+        break;
+      case "Ravenclaw":
+        ravenclaw++;
+        break;
+      case "Slytherin":
+        slytherin++;
+        break;
+      default:
+        break;
     }
   });
-  // add all that fits new criteria but are not already in list
-  notActiveInList.forEach((s) => {
-    let nameSearch = s.listname.toLowerCase();
-    // remove if name not matching search criteria
-    if (nameSearch.includes(searchInput)) {
-      //activeInList.push(s);
-    }
-  });
-  // sort the new active list
-  console.log(activeInList);
-  console.log(notActiveInList);
-
-
-  */
+  tableInfo.querySelector(".houseNumbers").textContent =
+    "Gryffindor: " +
+    gryffindor +
+    ", Hufflepuff: " +
+    hufflepuff +
+    ", Ravenclaw: " +
+    ravenclaw +
+    ", Slytherin: " +
+    slytherin;
 }

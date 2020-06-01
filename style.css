@@ -1,5 +1,5 @@
 :root {
-  --primary-gryfdfindor: red;
+  --primary-gryffindor: red;
   --primary-slytherin: green;
   --primary-hufflepuff: yellow;
   --primary-ravenclaw: blue;
@@ -23,6 +23,18 @@ h1 {
   text-align: center;
 }
 
+#tableInfo {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 table {
   border-collapse: collapse;
   border: 1px solid black;
@@ -30,7 +42,6 @@ table {
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 20px;
 }
 th {
   padding: 8px;
@@ -51,6 +62,7 @@ td {
 }
 
 .studentItem {
+  animation: introKF 0.3s ease-in-out;
 }
 
 .studentItem:hover {
@@ -97,4 +109,26 @@ td {
 
 #singleContent .picture {
   width: 100px;
+}
+
+.minimize {
+  animation: minimizeKF 0.3s ease-in-out;
+}
+
+@keyframes minimizeKF {
+  0% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes introKF {
+  0% {
+    transform: scaleY(0);
+  }
+  100% {
+    transform: scaleY(1);
+  }
 }
