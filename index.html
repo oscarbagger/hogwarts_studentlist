@@ -7,21 +7,49 @@
     <title>Hogwarts student list</title>
   </head>
   <body>
-    <main>
-      <div id="singleView">
-        <div id="singleContent">
-          <p class="name"></p>
-          <p class="house"></p>
-        </div>
-      </div>
-      <section id="studentList"></section>
-    </main>
-    <template>
-      <div class="studentItem">
-        <img src="" alt="studentpicture" />
+    <div id="singleView">
+      <div id="singleContent" data-house="">
+        <img src="" alt="studentpicture" class="picture" />
         <p class="name"></p>
         <p class="house"></p>
+        <p class="gender"></p>
+        <p class="blood"></p>
+        <p class="prefect"></p>
+        <p class="inquisitor"></p>
       </div>
+    </div>
+    <main>
+      <h1>Hogwarts Studentlist</h1>
+      <div id="searchBar">
+        <input type="text" size="48" placeholder=" Search" />
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>House</th>
+            <th>Blood</th>
+            <th>Prefect</th>
+            <th>Inquisitorial Squad</th>
+          </tr>
+        </thead>
+        <tbody id="studentList"></tbody>
+      </table>
+    </main>
+    <template>
+      <tr class="studentItem" data-name="">
+        <td>
+          <img src="" alt="studentpicture" class="picture" />
+        </td>
+        <td class="name"></td>
+        <td class="gender"></td>
+        <td class="house"></td>
+        <td class="blood"></td>
+        <td class="prefect"></td>
+        <td class="inquisitor"></td>
+      </tr>
     </template>
     <script src="script.js"></script>
   </body>
