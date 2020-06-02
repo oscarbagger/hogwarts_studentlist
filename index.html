@@ -3,12 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script
+      src="https://kit.fontawesome.com/c0ab951e8e.js"
+      crossorigin="anonymous"
+    ></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
     <title>Hogwarts student list</title>
   </head>
   <body>
     <div id="singleView">
       <div id="singleContent" data-house="">
+        <!--<i class="fas fa-times"></i> -->
         <img src="" alt="studentpicture" class="picture" />
         <p class="name"></p>
         <p class="house"></p>
@@ -16,12 +21,49 @@
         <p class="blood"></p>
         <p class="prefect"></p>
         <p class="inquisitor"></p>
+        <input type="button" value="Make prefect" id="prefectButton" />
+        <input type="button" value="Make inquisitor" id="inquisitorButton" />
+        <input type="button" value="Expel student" id="expelButton" />
       </div>
     </div>
     <main>
       <h1>Hogwarts Studentlist</h1>
       <div id="searchBar">
         <input type="text" size="48" placeholder=" Search" />
+      </div>
+      <div id="filters">
+        <div>
+          <p>Houses</p>
+          <label for="gryffindor">Gryffindor</label>
+          <input type="checkbox" id="gryffindor" />
+          <label for="hufflepuff">Hufflepuff</label>
+          <input type="checkbox" id="hufflepuff" />
+          <label for="ravenclaw">Ravenclaw</label>
+          <input type="checkbox" id="ravenclaw" />
+          <label for="slytherin">Slytherin</label>
+          <input type="checkbox" id="slytherin" />
+        </div>
+        <div>
+          <p>Blood status</p>
+          <label for="pure-blood">Pure-blood</label>
+          <input type="checkbox" id="pure-blood" />
+          <label for="half-blood">Half-blood</label>
+          <input type="checkbox" id="half-blood" />
+          <label for="muggle">Muggle</label>
+          <input type="checkbox" id="muggle" />
+        </div>
+        <div>
+          <label for="prefect">Prefect</label>
+          <input type="checkbox" id="prefect" />
+        </div>
+        <div>
+          <label for="inquisitor">Inquisitor</label>
+          <input type="checkbox" id="inquisitor" />
+        </div>
+        <div>
+          <label for="expelled">Expelled</label>
+          <input type="checkbox" id="expelled" />
+        </div>
       </div>
       <div id="tableInfo">
         <p class="studentNumbers">
@@ -37,12 +79,15 @@
         <thead>
           <tr>
             <th>Image</th>
-            <th>Name</th>
-            <th>Gender</th>
-            <th>House</th>
-            <th>Blood</th>
-            <th>Prefect</th>
-            <th>Inquisitorial Squad</th>
+            <th class="sortOption" data-sort="firstname">First Name</th>
+            <th class="sortOption" data-sort="lastname">Last Name</th>
+            <!--<th class="sortOption">Gender</th> -->
+            <th class="sortOption" data-sort="house">House</th>
+            <th class="sortOption" data-sort="blood">Blood</th>
+            <th class="sortOption" data-sort="prefect">Prefect</th>
+            <th class="sortOption" data-sort="inquisitor">
+              Inquisitorial Squad
+            </th>
           </tr>
         </thead>
         <tbody id="studentList"></tbody>
@@ -50,11 +95,13 @@
     </main>
     <template>
       <tr class="studentItem" data-name="">
-        <td>
+        <td class="pictureFrame">
           <img src="" alt="studentpicture" class="picture" />
         </td>
-        <td class="name"></td>
-        <td class="gender"></td>
+        <!--<td class="name"></td> -->
+        <td class="firstname"></td>
+        <td class="lastname"></td>
+        <!--<td class="gender"></td> -->
         <td class="house"></td>
         <td class="blood"></td>
         <td class="prefect"></td>

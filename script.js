@@ -11,7 +11,7 @@ let activeInList = [];
 let notActiveInList = [];
 
 const settings = {
-  filter: null,
+  filter: [],
   sortBy: null,
   sortDir: "asc",
 };
@@ -37,6 +37,8 @@ const template = document.querySelector("template");
 const single = document.querySelector("#singleView");
 const main = document.querySelector("#studentList");
 const tableInfo = document.querySelector("#tableInfo");
+const sortButtons = document.querySelectorAll(".sortOption");
+const filterButtons = document.querySelectorAll("#filters input");
 const searchBar = document.querySelector("#searchBar input");
 
 let singleOpen = false;
@@ -51,9 +53,21 @@ function start() {
       singleOpen = false;
     }
   }); */
-  searchBar.addEventListener("input", function () {
+  /* searchBar.addEventListener("input", function () {
     searchInput = searchBar.value.toLowerCase();
     updateList();
+  }); */
+
+  sortButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      updateSortType(this.dataset.sort);
+      sortList();
+    });
+  });
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      console.log("working");
+    });
   });
 }
 
@@ -67,9 +81,9 @@ async function loadJson() {
 
 function prepareObjects(jsonData) {
   studentList = jsonData.map(prepareObject);
+  activeInList = studentList;
   prepareImages();
-  console.log(studentList);
-  ShowList();
+  makeList();
 }
 
 function prepareImages() {
@@ -173,8 +187,9 @@ function capitalizeText(myString) {
   }
 }
 
-function ShowList() {
-  studentList.forEach((s) => {
+function makeList() {
+  main.innerHTML = "";
+  activeInList.forEach((s) => {
     makeStudentElement(s);
   });
   updatetableInfo();
@@ -196,12 +211,12 @@ function showSingle(student) {
 }
 
 function makeStudentElement(student) {
-  activeInList.push(student);
   let clone = template.cloneNode(true).content;
 
   clone.querySelector(".studentItem").dataset.name = student.listname;
-  clone.querySelector(".name").textContent = student.listname;
-  clone.querySelector(".gender").textContent = student.gender;
+  clone.querySelector(".firstname").textContent = student.firstname;
+  clone.querySelector(".lastname").textContent = student.lastname;
+  //clone.querySelector(".gender").textContent = student.gender;
   clone.querySelector(".house").textContent = student.house;
   clone.querySelector(".blood").textContent = student.blood;
   clone.querySelector(".prefect").textContent = student.prefect;
@@ -223,13 +238,43 @@ function matchesSearch(student) {
   } else return false;
 }
 
+function updateSortType(type) {
+  if (settings.sortBy == type) {
+    if (settings.sortDir == "asc") {
+      settings.sortDir = "desc";
+    } else {
+      settings.sortDir = "asc";
+    }
+  } else {
+    settings.sortDir = "asc";
+  }
+  settings.sortBy = type;
+}
+
+function updateFilter(type) {
+  // if filter empty, add type to filter
+  if (settings.filter.length == 0) {
+    settings.filter.push(type);
+  }
+  // if type is already in filter, remove it
+  else if (settings.filter.includes(type)) {
+    settings.filter.splice(i, 1);
+  }
+  //if type is not in filter then add it
+  else {
+    settings.filter.push(type);
+  }
+  console.log(settings.filter);
+}
+
+/*
 function updateList() {
   let removeFromList = [];
   let addToList = [];
 
   // filter by searchinput
 
-  activeInList = activeInList.filter(matchesSearch);
+  activeInList = studentList.filter(matchesSearch);
 
   // remove students from list
   removeFromList.forEach((s) => {
@@ -243,11 +288,29 @@ function updateList() {
     makeStudentElement(s);
   });
   updatetableInfo();
+}  */
+
+function dynamicSort(property) {
+  return function (a, b) {
+    var result =
+      a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
+    return result;
+  };
+}
+
+function sortList() {
+  studentList.sort(dynamicSort(settings.sortBy));
+  // reverse it afterwards if descending
+  if (settings.sortDir == "desc") {
+    studentList.reverse();
+  }
+  makeList();
 }
 
 function updatetableInfo() {
+  let studentItems = main.querySelectorAll(".studentItem");
   tableInfo.querySelector(".studentNumbers").textContent =
-    activeInList.length + "/" + studentList.length + " students shown";
+    studentItems.length + "/" + studentList.length + " students shown";
   tableInfo.querySelector(".expelledNumbers").textContent =
     expelledList.length + " students expelled";
   let gryffindor = 0;
