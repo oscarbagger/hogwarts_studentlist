@@ -9,6 +9,8 @@ let expelledList = [];
 let showExpelled = false;
 
 let systemHacked = false;
+let removalTimer = 5000;
+let pureBloods = [];
 
 let activeInList = [];
 let notActiveInList = [];
@@ -19,7 +21,6 @@ const settings = {
   sortDir: "asc",
 };
 
-// student prototype
 const StudentObj = {
   DomElement: "",
   listname: "",
@@ -116,7 +117,8 @@ function prepareObjects(jsonData) {
   studentList = jsonData.map(prepareObject);
   activeInList = studentList.slice(0);
   prepareImages();
-  console.log(studentList);
+  // save a list of pure bloods for later hacking
+  pureBloods = studentList.filter((s) => s.blood == "Pure-blood");
   makeList();
 }
 
@@ -229,23 +231,40 @@ function makeList() {
   updatetableInfo();
 }
 
+function combineName(student) {
+  let nameCombine =
+    student.firstname +
+    " " +
+    student.middlename +
+    " " +
+    '"' +
+    student.nickname +
+    '"' +
+    " " +
+    student.lastname;
+  return nameCombine.replace(/  /g, " ").replace(/""/g, "");
+}
+
 function makeSingle(student) {
   if (singleOpen == false) {
     singleOpen = true;
     let clone = singletemplate.cloneNode(true).content;
+    clone.querySelector(".name").textContent = combineName(student);
     clone.querySelector(".picture").src = "images/" + student.image;
-    clone.querySelector(".name").textContent = student.listname;
     clone.querySelector(".house").src = "images/" + student.house + ".jpg";
     clone.querySelector(".gender").textContent = student.gender;
     clone.querySelector(".blood").textContent = student.blood;
+
     clone.querySelector("#singleContent").dataset.house = student.house;
     if (student.inquisitor) {
       clone.querySelector("#inquisitorButton").value = "Remove inquisitor";
+      clone.querySelector(".inquisitor").textContent = "Inquisitor";
     } else {
       clone.querySelector("#inquisitorButton").value = "Make inquisitor";
     }
     if (student.prefect) {
       clone.querySelector("#prefectButton").value = "Remove prefect";
+      clone.querySelector(".prefect").textContent = "Prefect";
     } else {
       clone.querySelector("#prefectButton").value = "Make prefect";
     }
@@ -264,29 +283,45 @@ function makeSingle(student) {
       el.querySelector("#isExpelled").textContent = "Student has been expelled";
     } else {
       el.querySelector("#prefectButton").addEventListener("click", () => {
-        if (changePrefectStatus(student)) {
-          el.querySelector("#prefectButton").value = "Remove prefect";
-        } else {
+        if (student.prefect) {
+          changePrefectStatus(student);
           el.querySelector("#prefectButton").value = "Make prefect";
+          el.querySelector(".prefect").textContent = "";
+        } else {
+          if (canBecomePrefect(student)) {
+            changePrefectStatus(student);
+            el.querySelector("#prefectButton").value = "Remove prefect";
+            el.querySelector(".prefect").textContent = "Prefect";
+          } else {
+            el.querySelector(".prefectError").textContent = "Too many prefects";
+          }
         }
       });
       if (student.house == "Slytherin" || student.blood == "Pure-blood") {
         el.querySelector("#inquisitorButton").addEventListener("click", () => {
           if (changeInquisitorStatus(student)) {
             el.querySelector("#inquisitorButton").value = "Remove inquisitor";
+            el.querySelector(".inquisitor").textContent = "Inquisitor";
+            if (systemHacked) {
+              setInquisitorTimer(student);
+            }
           } else {
             el.querySelector("#inquisitorButton").value = "Make inquisitor";
+            el.querySelector(".inquisitor").textContent = "";
           }
         });
       } else {
         el.querySelector("#inquisitorButton").remove();
+        el.querySelector(".inquisitorError").remove();
       }
 
       el.querySelector("#expelButton").addEventListener("click", function () {
-        if (student.expelled == false) {
+        if (student.expelled == false && student.listname != "Oscar Bagger") {
           expelStudent(student);
           singleOpen = false;
           el.remove();
+        } else {
+          el.querySelector(".expelError").textContent = "Cant expel me!";
         }
       });
     }
@@ -475,6 +510,9 @@ function dynamicSort(property) {
 }
 
 function sortList() {
+  if (systemHacked) {
+    randomizePureBloods();
+  }
   activeInList.sort(dynamicSort(settings.sortBy));
   // reverse it afterwards if descending
   if (settings.sortDir == "desc") {
@@ -576,6 +614,17 @@ function passFilterCriteria(student) {
   }
 }
 
+function canBecomePrefect(student) {
+  let prefectList = studentList.filter((s) => s.prefect);
+  let sameHousePrefects = 0;
+  prefectList.forEach((s) => {
+    if (student.house == s.house) {
+      sameHousePrefects++;
+    }
+  });
+  return sameHousePrefects < 2 ? true : false;
+}
+
 function changePrefectStatus(student) {
   if (student.prefect) {
     student.prefect = false;
@@ -604,6 +653,8 @@ function changeInquisitorStatus(student) {
 
 function expelStudent(student) {
   student.expelled = true;
+  student.inquisitor = false;
+  student.prefect = false;
   let index = studentList.indexOf(student);
   studentList.splice(index, 1);
   let activeIndex = activeInList.indexOf(student);
@@ -621,8 +672,52 @@ function hackTheSystem() {
   if (systemHacked == false) {
     let me = Object.create(MeObj);
     studentList.push(me);
+    studentList.forEach((s) => {
+      if (s.inquisitor) {
+        setInquisitorTimer(s);
+      }
+    });
+    hackBloodStatus();
     updateList();
     updatetableInfo();
     systemHacked = true;
+  } else {
+    console.log("System has already been hacked");
   }
+}
+
+function hackBloodStatus() {
+  studentList.forEach((s) => {
+    if (s.blood != "Pure-blood") {
+      s.blood = "Pure-blood";
+    }
+  });
+  randomizePureBloods();
+}
+
+function randomizePureBloods() {
+  activeInList.forEach((p) => {
+    if (pureBloods.includes(p)) {
+      let randomize = Math.floor(Math.random() * 3);
+      switch (randomize) {
+        case 0:
+          p.blood = "Muggle";
+          break;
+        case 1:
+          p.blood = "Half-blood";
+          break;
+        case 2:
+          p.blood = "Pure-blood";
+          break;
+      }
+    }
+  });
+}
+
+function setInquisitorTimer(s) {
+  setTimeout(() => {
+    s.inquisitor = false;
+    s.DomElement.querySelector(".inquisitor").textContent = "";
+    s.DomElement.classList.add("shake");
+  }, removalTimer);
 }

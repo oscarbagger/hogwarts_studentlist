@@ -108,25 +108,41 @@
     <template id="templateSingle">
       <div id="singleView">
         <div id="singleContent" data-house="">
-          <span style="font-size: 48px;">
-            <i class="fas fa-times" id="singleClose"></i>
-          </span>
-          <img src="" alt="studentpicture" class="picture" />
-          <img src="" alt="house crest" class="house" />
-          <h3 class="name"></h3>
-          <p class="gender"></p>
-          <p class="blood"></p>
-          <p class="prefect"></p>
-          <p class="inquisitor"></p>
-          <div>
-            <input type="button" value="Make prefect" id="prefectButton" />
-            <input
-              type="button"
-              value="Make inquisitor"
-              id="inquisitorButton"
+          <div id="headerContent">
+            <span style="font-size: 40px;">
+              <i class="fas fa-times" id="singleClose"></i>
+              <h3 class="name"></h3>
+            </span>
+          </div>
+          <div class="topcontent">
+            <img
+              src=""
+              alt="studentpicture"
+              class="picture"
+              id="singleStudentImage"
             />
-            <input type="button" value="Expel student" id="expelButton" />
-            <h3 id="isExpelled"></h3>
+            <img src="" alt="house crest" class="house" id="houseCrest" />
+          </div>
+          <div class="bottomContent">
+            <div>
+              <p class="gender"></p>
+              <p class="blood"></p>
+              <p class="prefect"></p>
+              <p class="inquisitor"></p>
+            </div>
+            <div>
+              <input type="button" value="Make prefect" id="prefectButton" />
+              <p class="error prefectError"></p>
+              <input
+                type="button"
+                value="Make inquisitor"
+                id="inquisitorButton"
+              />
+              <p class="error inquisitorError"></p>
+              <input type="button" value="Expel student" id="expelButton" />
+              <p class="error expelError"></p>
+              <h3 id="isExpelled"></h3>
+            </div>
           </div>
         </div>
       </div>

@@ -1,8 +1,12 @@
 :root {
+  --color-dark: rgb(223, 210, 173);
+  --color-light: rgb(238, 236, 204);
+  --color-black: rgb(65, 64, 54);
+
   --primary-gryffindor: rgb(170, 73, 73);
   --crest-gryffindor: "images/Gryffindor.jpg";
   --primary-slytherin: rgb(83, 156, 83);
-  --primary-hufflepuff: rgb(207, 205, 40);
+  --primary-hufflepuff: rgb(180, 178, 72);
   --primary-ravenclaw: rgb(102, 112, 209);
 
   --text-font: "Playfair Display", serif;
@@ -35,7 +39,8 @@ h3 {
 }
 
 p,
-label {
+label,
+input {
   font-family: var(--text-font);
 }
 
@@ -72,7 +77,7 @@ label {
 
 table {
   border-collapse: collapse;
-  border: 1px solid black;
+  border: 1px solid var(--color-black);
   width: 100%;
   max-width: 1200px;
   margin-left: auto;
@@ -84,13 +89,13 @@ th {
 }
 
 tr:nth-child(odd) {
-  background: beige;
+  background-color: var(--color-light);
 }
 
 th,
 td {
   text-align: left;
-  border: 1px solid black;
+  border: 1px solid var(--color-black);
   font-family: var(--text-font);
 }
 
@@ -126,8 +131,8 @@ td {
 }
 
 #singleView {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   position: fixed;
   top: 0px;
   left: 0px;
@@ -141,16 +146,25 @@ td {
   margin: auto;
   padding: 5px;
   width: 30vw;
-  height: 50vh;
-  background-color: white;
-  border: 1px solid black;
+  min-width: 300px;
+  height: 70vh;
+  background-color: var(--color-light);
+  border: 2px solid var(--color-black);
+}
+
+#singleContent #headerContent {
+  width: 98%;
+  text-align: center;
+  margin-bottom: 10px;
+  border: 2px solid var(--color-black);
 }
 
 #singleClose {
-  position: absolute;
-  top: 0px;
-  left: 1vw;
+  padding: 2px;
+  padding-left: 10px;
   transition: 0.1s ease;
+  position: absolute;
+  left: 0px;
 }
 
 #singleClose:hover {
@@ -159,25 +173,87 @@ td {
   transform: scale(1.05);
 }
 
-#singleContent[data-house="Gryffindor"] {
+#singleContent input {
+  width: 12vw;
+  padding: 5px;
+  margin: 5px;
+  font-size: 1rem;
+  /*background-color: var(--color-dark); */
+  transition: 0.2s linear;
+}
+
+#singleContent input:hover {
+  cursor: pointer;
+  background-color: var(--color-light);
+}
+
+#singleContent .error {
+  height: 30px;
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+#singleContent .bottomContent {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 20px;
+}
+#singleContent .bottomContent div {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+#singleContent .bottomContent p {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 5px;
+  font-size: 1.8rem;
+  font-weight: 600;
+  font-family: var(--display-font);
+}
+
+#singleStudentImage {
+  width: 120px;
+}
+
+#houseCrest {
+  width: 80px;
+}
+
+#singleContent[data-house="Gryffindor"] input {
   background-color: var(--primary-gryffindor);
 }
-#singleContent[data-house="Slytherin"] {
+#singleContent[data-house="Slytherin"] input {
   background-color: var(--primary-slytherin);
 }
-#singleContent[data-house="Hufflepuff"] {
+#singleContent[data-house="Hufflepuff"] input {
   background-color: var(--primary-hufflepuff);
 }
-#singleContent[data-house="Ravenclaw"] {
+#singleContent[data-house="Ravenclaw"] input {
   background-color: var(--primary-ravenclaw);
 }
 
-#singleContent img {
-  width: 150px;
+#singleContent[data-house="Gryffindor"] #headerContent {
+  background-color: var(--primary-gryffindor);
+}
+#singleContent[data-house="Slytherin"] #headerContent {
+  background-color: var(--primary-slytherin);
+}
+#singleContent[data-house="Hufflepuff"] #headerContent {
+  background-color: var(--primary-hufflepuff);
+}
+#singleContent[data-house="Ravenclaw"] #headerContent {
+  background-color: var(--primary-ravenclaw);
 }
 
 .minimize {
   animation: minimizeKF 0.3s ease-in-out;
+}
+
+.shake {
+  animation: shakeKF 0.3s ease-in-out;
 }
 
 @keyframes minimizeKF {
@@ -195,5 +271,17 @@ td {
   }
   100% {
     transform: scaleY(1);
+  }
+}
+
+@keyframes shakeKF {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
   }
 }
