@@ -1,8 +1,12 @@
 :root {
-  --primary-gryffindor: red;
-  --primary-slytherin: green;
-  --primary-hufflepuff: yellow;
-  --primary-ravenclaw: blue;
+  --primary-gryffindor: rgb(170, 73, 73);
+  --crest-gryffindor: "images/Gryffindor.jpg";
+  --primary-slytherin: rgb(83, 156, 83);
+  --primary-hufflepuff: rgb(207, 205, 40);
+  --primary-ravenclaw: rgb(102, 112, 209);
+
+  --text-font: "Playfair Display", serif;
+  --display-font: "Italianno", cursive;
 }
 
 * {
@@ -15,7 +19,24 @@ img {
 
 h1 {
   text-align: center;
+  font-size: 3rem;
+  font-family: var(--display-font);
+}
+
+h2 {
+  text-align: center;
   font-size: 2.5rem;
+  font-family: var(--display-font);
+}
+h3 {
+  text-align: center;
+  font-size: 2rem;
+  font-family: var(--display-font);
+}
+
+p,
+label {
+  font-family: var(--text-font);
 }
 
 #searchBar {
@@ -34,10 +55,7 @@ h1 {
   display: flex;
   flex-direction: column;
   padding: 10px;
-}
-
-#filters div p {
-  font-weight: 700;
+  align-items: center;
 }
 
 #tableInfo {
@@ -62,6 +80,7 @@ table {
 }
 th {
   padding: 8px;
+  background-color: rgb(223, 210, 173);
 }
 
 tr:nth-child(odd) {
@@ -72,6 +91,7 @@ th,
 td {
   text-align: left;
   border: 1px solid black;
+  font-family: var(--text-font);
 }
 
 .sortOption:hover {
@@ -100,24 +120,43 @@ td {
   width: 100%;
 }
 
+.studentItem .inquisitor,
+.studentItem .prefect {
+  font-size: 2rem;
+}
+
 #singleView {
   width: 100vw;
   height: 100vh;
-  display: none;
   position: fixed;
   top: 0px;
   left: 0px;
   background-color: rgba(0, 0, 0, 0.8);
   text-align: center;
 }
+
 #singleContent {
   position: relative;
-  z-index: 1;
+  top: 10vh;
   margin: auto;
-  width: 50vw;
+  padding: 5px;
+  width: 30vw;
   height: 50vh;
   background-color: white;
   border: 1px solid black;
+}
+
+#singleClose {
+  position: absolute;
+  top: 0px;
+  left: 1vw;
+  transition: 0.1s ease;
+}
+
+#singleClose:hover {
+  cursor: pointer;
+  transform-origin: 50% 50%;
+  transform: scale(1.05);
 }
 
 #singleContent[data-house="Gryffindor"] {
@@ -133,8 +172,8 @@ td {
   background-color: var(--primary-ravenclaw);
 }
 
-#singleContent .picture {
-  width: 100px;
+#singleContent img {
+  width: 150px;
 }
 
 .minimize {
