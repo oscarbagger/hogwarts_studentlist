@@ -491,7 +491,6 @@ function updateList() {
   activeInList = activeInList.filter(matchesSearch);
   // make the new list and update its info
   makeList();
-  updatetableInfo();
 }
 
 function dynamicSort(property) {
@@ -679,7 +678,6 @@ function hackTheSystem() {
     });
     hackBloodStatus();
     updateList();
-    updatetableInfo();
     systemHacked = true;
   } else {
     console.log("System has already been hacked");
